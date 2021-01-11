@@ -14,20 +14,37 @@ public enum BinaryFileReader implements FileToObjectReader {
     INSTANCE;
     private byte[] fileAsBytes;
     private final int headerSize = 4500;
-    private final int seriesLength = 16;
-    private final int seriesLengthInBytes = 32;
+    private int seriesLength = 16;
+    private int seriesLengthInBytes = 32;
 
+
+//    @Override
+//    public String readFileToJSON(String filePath) {
+//        openFile(filePath);
+//        StringBuilder fileJSON = new StringBuilder("");
+//        String seriesMeasures[] = readContent();
+//        fileJSON.append("{");
+//        for(int i = 0; i < seriesLength; i++){
+//            fileJSON.append(seriesMeasures[i]);
+//        }
+//        fileJSON.append("}");
+//        return String.valueOf(fileJSON);
+//    }
 
     @Override
-    public String readFileToJSON(String filePath) {
-        openFile(filePath);
+    public String readFileToJSON(byte[] fileAsBytes, String fileName){
+        this.fileAsBytes = fileAsBytes;
+        detectNumberOfSensors();
+
         StringBuilder fileJSON = new StringBuilder("");
         String seriesMeasures[] = readContent();
-        fileJSON.append("{");
+        fileJSON.append("{\"NumberOfSensors\":").append(this.seriesLength).append(",");
+        fileJSON.append("\"FileName\":\"").append(fileName).append("\",");
+        fileJSON.append("\"SeriesValues\":[");
         for(int i = 0; i < seriesLength; i++){
             fileJSON.append(seriesMeasures[i]);
         }
-        fileJSON.append("}");
+        fileJSON.append("]}");
         return String.valueOf(fileJSON);
     }
 
@@ -73,18 +90,16 @@ public enum BinaryFileReader implements FileToObjectReader {
 
     private void readSeries(StringBuilder[] seriesBuilder, int startingPosition, long measurementPosition) {
         int sensorNumber = 1;
-        int numberOfSensors = 16;
         byte[] bytesToRead = new byte[2];
 
         for (int i = startingPosition; i < startingPosition + seriesLengthInBytes; i = i + 2) {
 
-            if(sensorNumber > numberOfSensors)
+            if(sensorNumber > seriesLength)
                 sensorNumber = 1;
 
             if (seriesBuilder[sensorNumber - 1] == null)
-                seriesBuilder[sensorNumber - 1] = new StringBuilder("\"Sensor" + sensorNumber + "\":[");
+                seriesBuilder[sensorNumber - 1] = new StringBuilder("[");
 
-//            int redValue = ((this.fileAsBytes[i] << 8) & 0x0000ff00) | (this.fileAsBytes[i + 1] & 0x000000ff);
             int redValue = 0;
             if (i < this.fileAsBytes.length - 1){
                 ByteBuffer buffer = ByteBuffer.allocateDirect(4);
@@ -97,18 +112,41 @@ public enum BinaryFileReader implements FileToObjectReader {
                 buffer.put((byte)0x00);
                 buffer.flip();
                 redValue = buffer.getInt();
-
-//                redValue = ((this.fileAsBytes[i] & 0xff) << 8) | (this.fileAsBytes[i + 1] & 0xff);
             }
-
-//            seriesBuilder[sensorNumber - 1].append("{");
-//            seriesBuilder[sensorNumber - 1].append("\"x\":");
-//            seriesBuilder[sensorNumber - 1].append(measurementPosition);
-//            seriesBuilder[sensorNumber - 1].append(",\"y\":");
             seriesBuilder[sensorNumber - 1].append(redValue);
-//            seriesBuilder[sensorNumber - 1].append("}");
             seriesBuilder[sensorNumber - 1].append(",");
             sensorNumber++;
         }
+    }
+
+    private void detectNumberOfSensors(){
+        int redValue = 0;
+        int i = this.headerSize;
+        int numberOfSensors = 0;
+        byte[] bytesToRead = new byte[2];
+
+        for(;;){
+            ByteBuffer buffer = ByteBuffer.allocateDirect(4);
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
+            bytesToRead[0] = this.fileAsBytes[i];
+            bytesToRead[1] = this.fileAsBytes[i + 1];
+            buffer.put(this.fileAsBytes[i]);
+            buffer.put(this.fileAsBytes[i + 1]);
+            buffer.put((byte)0x00);
+            buffer.put((byte)0x00);
+            buffer.flip();
+            redValue = buffer.getInt();
+
+            if(redValue == 0){
+                buffer.clear();
+                break;
+            }
+
+
+            numberOfSensors++;
+            i = i + 2;
+        }
+        this.seriesLength = numberOfSensors;
+        this.seriesLengthInBytes = numberOfSensors * 2;
     }
 }

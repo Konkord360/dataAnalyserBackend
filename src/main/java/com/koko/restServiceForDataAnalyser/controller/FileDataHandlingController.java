@@ -35,28 +35,27 @@ public class FileDataHandlingController {
 
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/uploadFile", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        logger.info("upload file Invoked with" + file.getOriginalFilename());
-
+    public ResponseEntity<String> uploadFile(@RequestParam("files") MultipartFile[] files) {
+        logger.info("upload file Invoked with" + files[0].getOriginalFilename());
+        String fileJson = "";
         BinaryFileReader binaryFileReader = BinaryFileReader.INSTANCE;
-        logger.info("Trying to process file: " + file.getOriginalFilename());
-        try {
-            String pathToFile = "src\\main\\resources\\".concat(Objects.requireNonNull(file.getOriginalFilename()));
-            file.transferTo(Path.of(pathToFile));
-            String fileJson = binaryFileReader.readFileToJSON(pathToFile);
-            try {
-                Path fileName = Path.of("Module1.JSON");
-                Files.writeString(fileName, fileJson);
-                return ResponseEntity.status(HttpStatus.OK).body("{\"message\":\"OK\",\"status\":\"success\"}");
-            } catch (IOException e) {
-                e.printStackTrace();
-                logger.info("Failed to process files");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"message\":\"Error with file handling\",\"status\":\"failed\"}");
-            }
-        } catch (Exception e) {
-            logger.info(e.toString());
-            logger.info("Failed to process files");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"message\":\"Error with file handling\",\"status\":\"failed\"}");
+        logger.info("Trying to process file: " + files[0].getOriginalFilename());
+        try{
+            fileJson = binaryFileReader.readFileToJSON(files[0].getBytes(), files[0].getOriginalFilename());
+            logger.info("File processing succeeded");
+        }catch (Exception e){
+            logger.info("File processing failed");
         }
+        try {
+            Path fileName = Path.of("Module1.JSON");
+            Files.writeString(fileName, fileJson);
+//            return ResponseEntity.status(HttpStatus.OK).body("{\"message\":\"OK\",\"status\":\"success\"}");
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.info("Failed to process files");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"message\":\"Error with file handling\",\"status\":\"failed\"}");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(fileJson);
     }
 }
