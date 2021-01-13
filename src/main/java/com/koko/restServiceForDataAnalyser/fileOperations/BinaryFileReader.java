@@ -67,8 +67,8 @@ public enum BinaryFileReader implements FileToObjectReader {
     }
 
     public String[] readContent() {
-        String[] seriesMeasures = new String[16];
-        StringBuilder[] seriesBuilder = new StringBuilder[16];
+        String[] seriesMeasures = new String[seriesLength];
+        StringBuilder[] seriesBuilder = new StringBuilder[seriesLength];
         long measurementPosition = 0;
 
         for (int i = this.headerSize; i < this.fileAsBytes.length; i = i + seriesLengthInBytes) {
