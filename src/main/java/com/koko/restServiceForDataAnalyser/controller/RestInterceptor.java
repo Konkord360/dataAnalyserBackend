@@ -13,7 +13,7 @@ public class RestInterceptor implements HandlerInterceptor {
     Logger logger = LoggerFactory.getLogger(RestInterceptor.class);
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
         String ipAddress = request.getHeader("X-Forward-For");
 
         if (ipAddress == null)
