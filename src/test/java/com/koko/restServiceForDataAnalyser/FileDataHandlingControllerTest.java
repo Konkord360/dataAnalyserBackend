@@ -42,7 +42,7 @@ public class FileDataHandlingControllerTest {
 
     @Test
     public void testControllerReturnsHTTP200WithFileConvertedToJSONWhenRequestedWithValidFile() throws Exception {
-        byte[] testFileWith3Sensors = Files.readAllBytes(Paths.get("src\\test\\java\\com\\koko\\restServiceForDataAnalyser\\testFileWith3Sensors.ccrdf"));
+        byte[] testFileWith3Sensors = Files.readAllBytes(Paths.get("src/test/java/com/koko/restServiceForDataAnalyser/testFileWith3Sensors.ccrdf"));
 
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "files",
@@ -58,8 +58,8 @@ public class FileDataHandlingControllerTest {
 
     @Test
     public void testControllerReturnsHTTP200WithFileConvertedToJSONWhenRequestedWithTwoValidFiles() throws Exception {
-        byte[] testFileWith3Sensors = Files.readAllBytes(Paths.get("src\\test\\java\\com\\koko\\restServiceForDataAnalyser\\testFileWith3Sensors.ccrdf"));
-        byte[] testFileWith16Sensors = Files.readAllBytes(Paths.get("src\\test\\java\\com\\koko\\restServiceForDataAnalyser\\testFileWith16Sensors.ccrdf"));
+        byte[] testFileWith3Sensors = Files.readAllBytes(Paths.get("src/test/java/com/koko/restServiceForDataAnalyser/testFileWith3Sensors.ccrdf"));
+        byte[] testFileWith16Sensors = Files.readAllBytes(Paths.get("src/test/java/com/koko/restServiceForDataAnalyser/testFileWith16Sensors.ccrdf"));
 
         MockMultipartFile mockMultipartFile1 = new MockMultipartFile(
                 "files",

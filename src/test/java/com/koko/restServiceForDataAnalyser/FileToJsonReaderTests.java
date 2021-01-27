@@ -22,10 +22,10 @@ public class FileToJsonReaderTests {
 
     @BeforeAll
     public void readFilesToByteArrays() throws IOException {
-        testFileWith16Sensors = Files.readAllBytes(Paths.get("src\\test\\java\\com\\koko\\restServiceForDataAnalyser\\testFileWith16Sensors.ccrdf"));
-        testFileWith3Sensors = Files.readAllBytes(Paths.get("src\\test\\java\\com\\koko\\restServiceForDataAnalyser\\testFileWith3Sensors.ccrdf"));
-        testFileWithHeaderOnly = Files.readAllBytes(Paths.get("src\\test\\java\\com\\koko\\restServiceForDataAnalyser\\testFileWithHeaderOnly.ccrdf"));
-        testFileWithOneSeriesOnly = Files.readAllBytes(Paths.get("src\\test\\java\\com\\koko\\restServiceForDataAnalyser\\testFileWithOneSeriesOnly.ccrdf"));
+        testFileWith16Sensors = Files.readAllBytes(Paths.get("src/test/java/com/koko/restServiceForDataAnalyser/testFileWith16Sensors.ccrdf"));
+        testFileWith3Sensors = Files.readAllBytes(Paths.get("src/test/java/com/koko/restServiceForDataAnalyser/testFileWith3Sensors.ccrdf"));
+        testFileWithHeaderOnly = Files.readAllBytes(Paths.get("src/test/java/com/koko/restServiceForDataAnalyser/testFileWithHeaderOnly.ccrdf"));
+        testFileWithOneSeriesOnly = Files.readAllBytes(Paths.get("src/test/java/com/koko/restServiceForDataAnalyser/testFileWithOneSeriesOnly.ccrdf"));
         this.fileToJSONReader = new BinaryFileToJSONReader();
     }
 
